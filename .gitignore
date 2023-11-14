@@ -1,3 +1,5 @@
 mpm-snow/
 imgui.ini
 *.zip
+mls-mpm/
+__pycache__/
