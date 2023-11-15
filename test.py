@@ -1,41 +1,56 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from shapely.geometry import Point, Polygon
 
-def generate_uniform_particles(num_particles, radius, density_factor=2):
-    # 生成均匀分布的角度
-    theta = np.linspace(0, 2*np.pi, num_particles)
+def generate_points_in_shape(radius, shape_vertices, resolution):
+    shape = Polygon(shape_vertices)
+    min_x, min_y, max_x, max_y = shape.bounds
+    points = []
 
-    # 将极坐标转换为笛卡尔坐标
-    x_outer = radius * np.cos(theta)
-    y_outer = radius * np.sin(theta)
+    # 定义网格的步长
+    step = radius * 2 / resolution
 
-    # 添加更多粒子到圆形内部
-    x_inner = np.random.uniform(low=-radius, high=radius, size=int(num_particles * density_factor))
-    y_inner = np.random.uniform(low=-radius, high=radius, size=int(num_particles * density_factor))
+    # 生成网格点
+    for x in np.arange(min_x, max_x, step):
+        for y in np.arange(min_y, max_y, step):
+            point = Point(x, y)
+            
+            if shape.contains(point):
+                points.append((x, y))
 
-    # 合并内外部的粒子
-    x = np.concatenate([x_outer, x_inner])
-    y = np.concatenate([y_outer, y_inner])
+    return np.array(points)
 
-    # 创建粒子数组
-    particles = np.column_stack((x, y))
+def plot_points(x, y, radius, shape_vertices):
+    plt.scatter(x, y, s=5, c='blue', alpha=0.7)
+    plt.gca().set_aspect('equal', adjustable='box')  # 保持坐标轴的纵横比一致
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    
+    # 绘制物体的轮廓
+    shape = Polygon(shape_vertices)
+    x, y = shape.exterior.xy
+    plt.plot(x, y, color='red', linewidth=2, linestyle='-', alpha=0.7)
 
-    return particles
+    # 绘制粒子的半径
+    for xi, yi in zip(x, y):
+        circle = plt.Circle((xi, yi), radius, color='green', fill=False, linestyle='--', linewidth=1)
+        plt.gca().add_patch(circle)
 
-# 圆形的半径
-circle_radius = 1.0
+    plt.title('Points Generated with Radius in a Shape')
+    plt.show()
 
-# 生成均匀分布的粒子在圆形内部
-num_particles = 500
-particles = generate_uniform_particles(num_particles, circle_radius)
+# 定义一个任意形状的物体（这里使用一个五边形作为示例）
+shape_vertices = [(2, 0), (4, 1), (5, 3), (3, 5), (1, 3)]
 
-# 绘制圆形
-circle = plt.Circle((0, 0), circle_radius, edgecolor='black', facecolor='none')
-fig, ax = plt.subplots(figsize=(6, 6))
-ax.add_patch(circle)
+# 定义粒子的半径
+particle_radius = 0.1
 
-# 绘制粒子
-plt.scatter(particles[:, 0], particles[:, 1], color='blue', s=5)
-plt.title('Particles in and around a 2D Circle')
-plt.axis('equal')
-plt.show()
+# 定义网格分辨率
+grid_resolution = 2
+
+# 生成在物体内的粒子坐标
+points = generate_points_in_shape(particle_radius, shape_vertices, grid_resolution)
+x, y = points[:, 0], points[:, 1]
+
+# 绘制粒子分布和物体轮廓
+plot_points(x, y, particle_radius, shape_vertices)
