@@ -3,3 +3,4 @@ imgui.ini
 *.zip
 mls-mpm/
 __pycache__/
+mesh2particle/*.npy
