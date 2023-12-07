@@ -49,6 +49,7 @@ class PlyParser:
         particles = []
         for x in np.arange(self.__min_x, self.__max_x, step):
             for y in np.arange(self.__min_y, self.__max_y, step):
+                print("Processing({}, {})".format(x, y))
                 for f in self.faces:
                     triangle = [self.vertices[index] for index in f]
                     if self.__isPointInTriangle((x,y), triangle):
@@ -61,14 +62,17 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import os
 
-    ply_path = 'bun_zipper_res4.ply'
-    out_file = 'bunny.npy'
+    ply_path = 'bun_zipper.ply'
+    out_file = 'bunny_res0_step0.01.npy'
     
     if os.path.exists(out_file):
         particles = np.load(out_file)
     else:
+        print("Reading ply file: " + ply_path)
         parser = PlyParser(ply_path)
-        particles = parser.toParticles(0.02)
+        print("Converting to particles")
+        particles = parser.toParticles(0.01)
+        print("Saving particles")
         np.save(out_file, particles)
 
     for p in particles:

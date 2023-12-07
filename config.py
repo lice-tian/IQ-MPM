@@ -3,10 +3,10 @@ import taichi as ti
 @ti.data_oriented
 class Params:
     def __init__(self) -> None:
-        self.res = (512, 512)       # window resolution (width, height)
-        self.max_fps = 120          # max FPS
+        self.res = (720, 720)           # window resolution (width, height)
+        self.max_fps = 120              # max FPS
         self.window_pos = (100, 100)    # window position
-        self.enable_vsync = True    # vertical sync
+        self.enable_vsync = True        # vertical sync
         
         self.dt = 2e-4      # time step of simulation
         

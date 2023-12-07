@@ -1,9 +1,8 @@
 import taichi as ti
 import argparse
 from config import params
-# from grid import Grid
 
-# initialize 'cuda' backend / set default 'int' and 'float'
+# initialize 'cuda' backend & set default 'int' and 'float'
 ti.init(arch=ti.cuda, default_ip=ti.i32, default_fp=ti.f32)
 
 # parse arguments
